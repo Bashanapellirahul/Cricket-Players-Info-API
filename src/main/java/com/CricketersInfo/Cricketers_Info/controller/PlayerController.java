@@ -54,5 +54,10 @@ public class PlayerController {
         return ResponseEntity.ok(service.updatePlayerInfo(name, request));
     }
 
+    @DeleteMapping("/name")
+    public ResponseEntity<String> deletePlayerInfoByName(@RequestParam String name){
+        service.deletePlayerInfo(name);
+        return ResponseEntity.ok("Player Info is deleted successfully");
+    }
 }
 

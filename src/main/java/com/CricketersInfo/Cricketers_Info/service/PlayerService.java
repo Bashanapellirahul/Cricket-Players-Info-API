@@ -84,6 +84,11 @@ public class PlayerService {
         return mapToResponse(repository.save(entity));
     }
 
+    public void deletePlayerInfo(String name){
+        CricketPlayersInfo cricketPlayersInfo = repository.findByPlayerNameIgnoreCase(name)
+                .orElseThrow(()->new RuntimeException("Player name not found"));
+        repository.delete(cricketPlayersInfo);
+    }
     public double calculateAverage(int totalRuns, int innings, int notOuts){
         int timesOut = innings - notOuts;
         if(timesOut==0){
