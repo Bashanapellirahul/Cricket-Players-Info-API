@@ -35,9 +35,6 @@ public class PlayerService {
         entity.setRole(request.getRole());
         entity.setGender(request.getGender());
         entity.setMatchType(request.getMatchType());
-        if(entity.getInnings() > entity.getMatches()){
-            throw new RuntimeException("Innings must be less than Matches");
-        }
         return mapToResponse(repository.save(entity));
     }
 
@@ -49,6 +46,12 @@ public class PlayerService {
     public List<PlayerInfoResponse> getSinglePlayerInfoByName(String playerName ){
         return repository.findByPlayerNameIgnoreCase(playerName)
                 .stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
+    public PlayerInfoResponse getPlayerInfoById(Long id){
+        CricketPlayersInfo entity = repository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Player Not Found with id: "+id));
+        return mapToResponse(entity);
     }
 
     public List<PlayerInfoResponse> getPlayerInfoByRole(Role role){
@@ -65,7 +68,7 @@ public class PlayerService {
         return repository.findByGender(gender).stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
-    public PlayerInfoResponse updatePlayerInfo(String name, PlayerInfoRequest request){
+    public PlayerInfoResponse updatePlayerInfoByName(String name, PlayerInfoRequest request){
 
         CricketPlayersInfo entity = repository.findByPlayerNameIgnoreCase(name).orElseThrow(()->new RuntimeException("Player not found"));
         entity.setPlayerName(request.getPlayerName());
@@ -84,11 +87,40 @@ public class PlayerService {
         return mapToResponse(repository.save(entity));
     }
 
-    public void deletePlayerInfo(String name){
+    public PlayerInfoResponse updatePlayerInfoById(Long id, PlayerInfoRequest request){
+
+        CricketPlayersInfo entity = repository.findById(id).orElseThrow(()->new RuntimeException("Player not found"));
+        entity.setPlayerName(request.getPlayerName());
+        entity.setPlayerAge(request.getPlayerAge());
+        entity.setCountry(request.getCountry());
+        entity.setMatches(request.getMatches());
+        entity.setInnings(request.getInnings());
+        entity.setTotalRuns(request.getTotalRuns());
+        entity.setNotOuts(request.getNotOuts());
+        entity.setPlayerAverage(calculateAverage(request.getTotalRuns(), request.getInnings(), request.getNotOuts()));
+        entity.setHighestScore(request.getHighestScore());
+        entity.setNoOf4s(request.getNoOf4s());
+        entity.setNoOf6s(request.getNoOf6s());
+        entity.setRole(request.getRole());
+        entity.setGender(request.getGender());
+//        if(entity.getInnings() > entity.getMatches()){
+//            throw new RuntimeException("Innings must be less than Matches");
+//        }
+        return mapToResponse(repository.save(entity));
+    }
+
+    public void deletePlayerInfoByName(String name){
         CricketPlayersInfo cricketPlayersInfo = repository.findByPlayerNameIgnoreCase(name)
                 .orElseThrow(()->new RuntimeException("Player name not found"));
         repository.delete(cricketPlayersInfo);
     }
+
+    public void deletePlayerInfoById(Long id){
+        CricketPlayersInfo cricketPlayersInfo = repository.findById(id)
+                .orElseThrow(()->new RuntimeException("Player name not found"));
+        repository.delete(cricketPlayersInfo);
+    }
+
     public double calculateAverage(int totalRuns, int innings, int notOuts){
         int timesOut = innings - notOuts;
         if(timesOut==0){
@@ -100,6 +132,7 @@ public class PlayerService {
 
     private PlayerInfoResponse mapToResponse(CricketPlayersInfo entity){
         PlayerInfoResponse response = new PlayerInfoResponse();
+        response.setId(entity.getId());
         response.setPlayerName(entity.getPlayerName());
         response.setPlayerAge(entity.getPlayerAge());
         response.setCountry(entity.getCountry());

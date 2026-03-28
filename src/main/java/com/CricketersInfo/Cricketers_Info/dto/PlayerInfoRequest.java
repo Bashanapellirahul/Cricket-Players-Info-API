@@ -14,8 +14,11 @@ import lombok.NoArgsConstructor;
 public class PlayerInfoRequest {
     @NotBlank(message = "Player Name is required")
     private String playerName;
+    @NotBlank(message = "Valid Age is required")
     private int playerAge;
+    @NotBlank(message = "Matches required")
     private int matches;
+    @NotBlank(message = "Innings is required")
     private int innings;
     private Double playerAverage;
     private int highestScore;

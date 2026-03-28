@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlayerInfoResponse {
+    private Long id;
     private String playerName;
     private int playerAge;
     private int matches;
