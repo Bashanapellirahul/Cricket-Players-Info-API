@@ -16,7 +16,6 @@ public interface PlayerRepository extends JpaRepository<CricketPlayersInfo, Long
     List<CricketPlayersInfo> findByRole(Role role);
     Optional<CricketPlayersInfo> findByPlayerNameIgnoreCase(String playerName);
     List<CricketPlayersInfo> findByCountryContainingIgnoreCase(String country);
-
     Optional<CricketPlayersInfo> findById(Long id);
 
 }

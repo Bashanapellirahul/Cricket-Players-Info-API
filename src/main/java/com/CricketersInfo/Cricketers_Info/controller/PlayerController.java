@@ -46,7 +46,7 @@ public class PlayerController {
 
     @GetMapping("/country")
     public ResponseEntity<List<PlayerInfoResponse>> getPlayerInfoByCountry(@RequestParam String country){
-        return ResponseEntity.ok(service.getPlayerinfoByCountry(country));
+        return ResponseEntity.ok(service.getPlayerInfoByCountry(country));
     }
 
     @GetMapping("/gender")

@@ -8,9 +8,7 @@ import com.CricketersInfo.Cricketers_Info.model.Role;
 import com.CricketersInfo.Cricketers_Info.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,20 +19,7 @@ public class PlayerService {
     public PlayerInfoResponse createPlayerInfo(PlayerInfoRequest request){
 
         CricketPlayersInfo entity = new CricketPlayersInfo();
-        entity.setPlayerName(request.getPlayerName());
-        entity.setPlayerAge(request.getPlayerAge());
-        entity.setCountry(request.getCountry());
-        entity.setMatches(request.getMatches());
-        entity.setInnings(request.getInnings());
-        entity.setTotalRuns(request.getTotalRuns());
-        entity.setNotOuts(request.getNotOuts());
-        entity.setPlayerAverage(calculateAverage(request.getTotalRuns(), request.getInnings(), request.getNotOuts()));
-        entity.setHighestScore(request.getHighestScore());
-        entity.setNoOf4s(request.getNoOf4s());
-        entity.setNoOf6s(request.getNoOf6s());
-        entity.setRole(request.getRole());
-        entity.setGender(request.getGender());
-        entity.setMatchType(request.getMatchType());
+        mapToRequest(entity, request);
         return mapToResponse(repository.save(entity));
     }
 
@@ -59,7 +44,7 @@ public class PlayerService {
                 .stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
-    public List<PlayerInfoResponse> getPlayerinfoByCountry(String country){
+    public List<PlayerInfoResponse> getPlayerInfoByCountry(String country){
         return repository.findByCountryContainingIgnoreCase(country)
                 .stream().map(this::mapToResponse).collect(Collectors.toList());
     }
@@ -71,41 +56,14 @@ public class PlayerService {
     public PlayerInfoResponse updatePlayerInfoByName(String name, PlayerInfoRequest request){
 
         CricketPlayersInfo entity = repository.findByPlayerNameIgnoreCase(name).orElseThrow(()->new RuntimeException("Player not found"));
-        entity.setPlayerName(request.getPlayerName());
-        entity.setPlayerAge(request.getPlayerAge());
-        entity.setCountry(request.getCountry());
-        entity.setMatches(request.getMatches());
-        entity.setInnings(request.getInnings());
-        entity.setTotalRuns(request.getTotalRuns());
-        entity.setNotOuts(request.getNotOuts());
-        entity.setPlayerAverage(calculateAverage(request.getTotalRuns(), request.getInnings(), request.getNotOuts()));
-        entity.setHighestScore(request.getHighestScore());
-        entity.setNoOf4s(request.getNoOf4s());
-        entity.setNoOf6s(request.getNoOf6s());
-        entity.setRole(request.getRole());
-        entity.setGender(request.getGender());
+        mapToRequest(entity, request);
         return mapToResponse(repository.save(entity));
     }
 
     public PlayerInfoResponse updatePlayerInfoById(Long id, PlayerInfoRequest request){
 
         CricketPlayersInfo entity = repository.findById(id).orElseThrow(()->new RuntimeException("Player not found"));
-        entity.setPlayerName(request.getPlayerName());
-        entity.setPlayerAge(request.getPlayerAge());
-        entity.setCountry(request.getCountry());
-        entity.setMatches(request.getMatches());
-        entity.setInnings(request.getInnings());
-        entity.setTotalRuns(request.getTotalRuns());
-        entity.setNotOuts(request.getNotOuts());
-        entity.setPlayerAverage(calculateAverage(request.getTotalRuns(), request.getInnings(), request.getNotOuts()));
-        entity.setHighestScore(request.getHighestScore());
-        entity.setNoOf4s(request.getNoOf4s());
-        entity.setNoOf6s(request.getNoOf6s());
-        entity.setRole(request.getRole());
-        entity.setGender(request.getGender());
-//        if(entity.getInnings() > entity.getMatches()){
-//            throw new RuntimeException("Innings must be less than Matches");
-//        }
+        mapToRequest(entity, request);
         return mapToResponse(repository.save(entity));
     }
 
@@ -150,6 +108,39 @@ public class PlayerService {
         response.setUpdatedAt(entity.getUpdatedAt());
         response.setMatchType(entity.getMatchType());
         return  response;
+    }
+
+    private void mapToRequest(CricketPlayersInfo entity, PlayerInfoRequest request){
+        if(request.getNotOuts()>request.getInnings()){
+            throw new RuntimeException("Not outs should not exceed innings");
+        }
+        if(request.getMatches()<request.getInnings()){
+            throw new RuntimeException("Innings must be less than Matches");
+        }
+        if(request.getRole() == null ||request.getMatchType() == null ||request.getGender() == null ){
+            throw new RuntimeException("Role, MatchType and Gender is required");
+        }
+        if(request.getTotalRuns() < request.getHighestScore()){
+            throw new RuntimeException("Total runs can not be less than highest score");
+        }
+        if(request.getInnings() - request.getNotOuts() == 0){
+            throw new IllegalArgumentException("Can not calculate average (Division by zero)");
+        }
+        entity.setPlayerName(request.getPlayerName());
+        entity.setPlayerAge(request.getPlayerAge());
+        entity.setCountry(request.getCountry());
+        entity.setMatches(request.getMatches());
+        entity.setInnings(request.getInnings());
+        entity.setTotalRuns(request.getTotalRuns());
+        entity.setNotOuts(request.getNotOuts());
+        entity.setPlayerAverage(calculateAverage(request.getTotalRuns(), request.getInnings(), request.getNotOuts()));
+        entity.setHighestScore(request.getHighestScore());
+        entity.setNoOf4s(request.getNoOf4s());
+        entity.setNoOf6s(request.getNoOf6s());
+        entity.setRole(request.getRole());
+        entity.setGender(request.getGender());
+        entity.setMatchType(request.getMatchType());
+
     }
 }
 
