@@ -7,6 +7,9 @@ import com.CricketersInfo.Cricketers_Info.model.Gender;
 import com.CricketersInfo.Cricketers_Info.model.Role;
 import com.CricketersInfo.Cricketers_Info.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,6 +91,25 @@ public class PlayerService {
         return (double) totalRuns/timesOut;
     }
 
+    public List<PlayerInfoResponse> getPlayerInfoSorting(boolean status, String... properties){
+        Sort sort = Sort.by(status ? Sort.Direction.ASC : Sort.Direction.DESC, properties);
+        return repository.findAll(sort).stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
+    public List<PlayerInfoResponse> getPaginationPlayerInfo(int pageNum,int recordsPerPage, boolean status, String... properties){
+        Sort sort = Sort.by(status ? Sort.Direction.ASC : Sort.Direction.DESC, properties);
+        Page<CricketPlayersInfo> page = repository.findAll(PageRequest.of(pageNum, recordsPerPage,sort));
+       return page.getContent().stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
+//    public List<PlayerInfoResponse> getDynamicPaginationPlayerInfo(int pageNumber, int recordsPerPage, boolean status, String... properties){
+//        Sort sort = Sort.by(status ? Sort.Direction.ASC : Sort.Direction.DESC, properties);
+//        PageRequest pageRequest = PageRequest.of(pageNumber, recordsPerPage,sort);
+//        Page<CricketPlayersInfo> page = repository.findAll(pageRequest);
+//        return page.getContent().stream().map(this::mapToResponse).collect(Collectors.toList());
+//    }
+
+
     private PlayerInfoResponse mapToResponse(CricketPlayersInfo entity){
         PlayerInfoResponse response = new PlayerInfoResponse();
         response.setId(entity.getId());
@@ -107,6 +129,7 @@ public class PlayerService {
         response.setCreatedAt(entity.getCreatedAt());
         response.setUpdatedAt(entity.getUpdatedAt());
         response.setMatchType(entity.getMatchType());
+        response.setPlayerStatus(entity.getPlayerStatus());
         return  response;
     }
 
@@ -140,7 +163,7 @@ public class PlayerService {
         entity.setRole(request.getRole());
         entity.setGender(request.getGender());
         entity.setMatchType(request.getMatchType());
-
+        entity.setPlayerStatus(request.getPlayerStatus());
     }
 }
 

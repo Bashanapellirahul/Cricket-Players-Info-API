@@ -75,5 +75,26 @@ public class PlayerController {
         service.deletePlayerInfoById(id);
         return ResponseEntity.ok("Player Info is deleted successfully");
     }
+
+    @GetMapping("/sortPlayers")
+    public ResponseEntity<List<PlayerInfoResponse>> getSortedPlayerInfo(@RequestParam boolean status){
+        return ResponseEntity.ok(service.getPlayerInfoSorting(status, "totalRuns"));
+    }
+
+    @GetMapping("/paginatedPlayersInfo")
+    public ResponseEntity<List<PlayerInfoResponse>> getSortedPlayersWithPagination(
+            @RequestParam(defaultValue = "0") int pageNum,
+            @RequestParam(defaultValue = "5") int recordsPerPage,
+            @RequestParam(defaultValue = "asc") boolean status,
+            @RequestParam(defaultValue = "totalRuns") String sortBy){
+        return  ResponseEntity.ok(service.getPaginationPlayerInfo(pageNum, recordsPerPage,
+                status, sortBy));
+    }
+
+//    @GetMapping("/sortedAndPgntdPlyrInfo")
+//    public ResponseEntity<List<PlayerInfoResponse>> getDynamicallySortedAndPaginationPlayerInfo(
+//            @RequestParam int pageNum, @RequestParam boolean status){
+//        return ResponseEntity.ok(service.getDynamicPaginationPlayerInfo(pageNum,status,"totalRuns"));
+//    }
 }
 

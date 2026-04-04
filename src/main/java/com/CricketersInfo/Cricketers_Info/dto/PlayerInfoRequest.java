@@ -2,6 +2,7 @@ package com.CricketersInfo.Cricketers_Info.dto;
 
 import com.CricketersInfo.Cricketers_Info.model.Gender;
 import com.CricketersInfo.Cricketers_Info.model.MatchType;
+import com.CricketersInfo.Cricketers_Info.model.PlayerStatus;
 import com.CricketersInfo.Cricketers_Info.model.Role;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -54,4 +55,7 @@ public class PlayerInfoRequest {
 
     @NotNull(message = "Gender is required")
     private Gender gender;
+
+    @NotNull(message = "Player Status is required")
+    private PlayerStatus playerStatus;
 }

@@ -18,7 +18,7 @@ public class CricketPlayersInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+    @Column()
     private String playerName;
     @Column
     private int playerAge;
@@ -51,4 +51,6 @@ public class CricketPlayersInfo {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @Enumerated(EnumType.STRING)
+    private PlayerStatus playerStatus;
 }

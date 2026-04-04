@@ -2,6 +2,7 @@ package com.CricketersInfo.Cricketers_Info.dto;
 
 import com.CricketersInfo.Cricketers_Info.model.Gender;
 import com.CricketersInfo.Cricketers_Info.model.MatchType;
+import com.CricketersInfo.Cricketers_Info.model.PlayerStatus;
 import com.CricketersInfo.Cricketers_Info.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,5 +31,5 @@ public class PlayerInfoResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Gender gender;
-
+    private PlayerStatus playerStatus;
 }
